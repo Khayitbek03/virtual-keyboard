@@ -15,3 +15,16 @@ const textarea = document.createElement('textarea');
 textarea.classList.add('textarea');
 wrapper.append(main);
 main.append(textarea);
+
+
+const keyboard = document.createElement('div');
+keyboard.classList.add('keyboard');
+main.append(keyboard);
+
+// footer
+const footer = document.createElement('footer');
+wrapper.append(footer);
+const footerHeading = document.createElement('div');
+footerHeading.classList.add('footer-heading');
+footer.append(footerHeading);
+footerHeading.textContent = 'To switch language press : ctrl+alt';

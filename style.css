@@ -30,3 +30,15 @@ main {
 .heading {
   color: antiquewhite;
 }
+.keyboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+footer {
+  margin-top: 20px;
+}
+.footer-heading {
+  color: antiquewhite;
+  font-size: 30px;
+}
