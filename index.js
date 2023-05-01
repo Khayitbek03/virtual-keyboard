@@ -116,3 +116,161 @@ function capsLockchangeRegister() {
     checker.isUpper = false;
   }
 }
+
+// SHIFT REGISTER CHANGE
+
+function pushShift() {
+    if (checker.isUpper) {
+      keys.forEach(n => {
+        n.register = 'lowerCase';
+        n.changeLayout();
+      });
+    } else {
+      keys.forEach(n => {
+        n.register = 'upperCase';
+        n.changeLayout();
+      });
+    }
+  }
+  function pullShift() {
+    if (checker.isUpper) {
+      keys.forEach(n => {
+        n.register = 'upperCase';
+        n.changeLayout();
+      });
+    } else {
+      keys.forEach(n => {
+        n.register = 'lowerCase';
+        n.changeLayout();
+      });
+    }
+  }
+  shift.forEach(n => {
+    n.addEventListener('mousedown', pushShift);
+    n.addEventListener('mouseup', pullShift);
+  });
+  
+  // change Language
+  function changeLanguage() {
+    if (checker.isEng) {
+      keys.forEach(n => {
+        n.lang = 'ru';
+        lan = 'ru';
+        n.changeLayout();
+      });
+      checker.isEng = false;
+    } else {
+      keys.forEach(n => {
+        n.lang = 'eng';
+        lan = 'eng';
+        n.changeLayout();
+      });
+      checker.isEng = true;
+    }
+  }
+  
+  // add to textarea
+  function addToTextarea(element) {
+    if (element.textContent === 'Backspace') {
+      if (textarea.selectionStart) {
+        textarea.setRangeText('', textarea.selectionStart - 1, textarea.selectionEnd, 'end');
+      }
+    } else if (element.textContent === 'enter') {
+      textarea.value += '\n';
+      return '';
+    } else if (element.textContent === 'Del') {
+      if (textarea.selectionEnd + 1) {
+        textarea.setRangeText('', textarea.selectionStart, textarea.selectionEnd + 1, 'end');
+      }
+    } else if (element.textContent === 'Space') {
+      textarea.value += ' ';
+    } else if (element.textContent === 'Tab') {
+      textarea.value += '    ';
+    } else if (element.textContent === 'shift') {
+      return '';
+    } else if (element.textContent === 'CapsLock') {
+      capsLockchangeRegister();
+    } else if (element.textContent === 'ALT') {
+      return '';
+    } else if (element.textContent === 'ctrl') {
+      return '';
+    } else {
+      textarea.setRangeText(element.textContent, textarea.selectionStart, textarea.selectionEnd, 'end');
+    }
+    return true;
+  }
+  
+  keys.forEach(n => {
+    n.tag.addEventListener('click', () => {
+      addToTextarea(n.tag);
+    });
+    n.tag.addEventListener('mousedown', () => {
+      n.tag.classList.add('active');
+      if (n.tag.textContent === 'ctrl') {
+        checker.isCtrl = true;
+      }
+    });
+    n.tag.addEventListener('mouseup', () => {
+      n.tag.classList.remove('active');
+    });
+  });
+  
+  // write with keyboard
+  
+  body.addEventListener('keydown', (e) => {
+    e.preventDefault();
+    keys.forEach(key => {
+      if (key.tag.dataset.keyCode === e.code) {
+        key.tag.classList.add('active');
+        addToTextarea(key.tag);
+        if (key.tag.textContent === 'shift') {
+          pushShift();
+        }
+        if (key.tag.textContent === 'ctrl') {
+          checker.isCtrl = true;
+        }
+        if (checker.isCtrl && key.tag.textContent === 'ALT') {
+          changeLanguage();
+          checker.isCtrl = false;
+        }
+      }
+    });
+  });
+  body.addEventListener('keyup', (e) => {
+    e.preventDefault();
+    keys.forEach(key => {
+      if (key.tag.dataset.keyCode === e.code) {
+        key.tag.classList.remove('active');
+        if (key.tag.textContent === 'shift') {
+          pullShift();
+        }
+      }
+    });
+  });
+  window.addEventListener('beforeunload', () => {
+    localStorage.setItem('language', lan);
+    localStorage.setItem('register', reg);
+  });
+  window.addEventListener('load', () => {
+    if (localStorage.getItem('register' !== 'null')) {
+      lan = localStorage.getItem('language');
+      reg = localStorage.getItem('register');
+      if (reg === 'upperCase') {
+        checker.isUpper = true;
+        capsLock.classList.add('pressed');
+      } else {
+        checker.isUpper = false;
+      }
+      if (lan === 'eng') {
+        checker.isEng = true;
+      } else {
+        checker.isEng = false;
+      }
+      keys.forEach(n => {
+        n.lang = lan;
+        n.register = reg;
+        n.changeLayout();
+      });
+    }
+  });
+  
